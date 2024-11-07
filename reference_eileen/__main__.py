@@ -23,7 +23,7 @@ from reference_eileen.config import (
     WAITING_ROOM_TIMER,
     INPUT_FIELD_UNRESP_GUESSER,
     INPUT_FIELD_UNRESP_EXPLAINER,
-    PIC1_PATH,
+    PICTURE_DIC,
 )
 from reference_eileen.dataloader import Dataloader
 from reference_eileen.grid import GridManager
@@ -591,7 +591,7 @@ class ReferenceBot(TaskBot):
     
     # experimental 
     def show_pictures(self, room_id, user_id):
-        picture_string = encode(PIC1_PATH)
+        picture_string = encode(PICTURE_DIC['Picture_8093.png'])
         logging.debug(f"This is the string from the picture path: {picture_string}")
         for i in range(4):
             self.sio.emit(

@@ -1,4 +1,5 @@
 from pathlib import Path
+import os
 
 ROOT = Path(__file__).parent.resolve()
 
@@ -31,4 +32,14 @@ INPUT_FIELD_UNRESP_GUESSER = "You can't send messages, you can only get them"
 INPUT_FIELD_UNRESP_EXPLAINER = "Wait for your partner's choice"
 
 # THE NEW PICTURES for Eileens version of the game
-PIC1_PATH = Path(f"{ROOT}/data/3ds_images/1027.png")
+PATH_1027 = Path(f"{ROOT}/data/3ds_images/1027.png")
+PICTURE_DIC = {}
+TRY = Path(f"{ROOT}/data/3ds_images/")
+PIC_VARIABLE = 0
+for filename in os.listdir(TRY):
+    if filename.endswith(".png"): 
+        # print(os.path.join(directory, filename))
+        PICTURE_DIC[f"Picture_{filename}"] =Path (f"{ROOT}/data/3ds_images/{filename}")
+        PIC_VARIABLE += 1
+    else:
+        continue
