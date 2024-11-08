@@ -1,12 +1,15 @@
 from pathlib import Path
 import os
+from reference_eileen.base64encode import encode_image_to_base64 as encode 
+import re
 
 ROOT = Path(__file__).parent.resolve()
 
-with open(Path(f"{ROOT}/data/instructions/explainer_instr_mixed.html")) as html_explainer:
+with open(Path(f"{ROOT}/data/instructions/explainer_instr_3ds.html")) as html_explainer:
     EXPLAINER_HTML = html_explainer.read()
-
-with open(Path(f"{ROOT}/data/instructions/guesser_instr_mixed.html")) as html_guesser:
+# Picture 1 = 1915.png, Picture 2 = 1393.png, Picture 3 = 15698.png, Picture 4 = 12800.png
+ 
+with open(Path(f"{ROOT}/data/instructions/guesser_instr_3ds.html")) as html_guesser:
     GUESSER_HTML = html_guesser.read()
 
 with open(Path(f"{ROOT}/data/empty_grid.html")) as html_guesser:
@@ -35,11 +38,20 @@ INPUT_FIELD_UNRESP_EXPLAINER = "Wait for your partner's choice"
 PATH_1027 = Path(f"{ROOT}/data/3ds_images/1027.png")
 PICTURE_DIC = {}
 TRY = Path(f"{ROOT}/data/3ds_images/")
+PATHNAME = ""
+PICTURE_ENCRYPT = ""
 PIC_VARIABLE = 0
 for filename in os.listdir(TRY):
     if filename.endswith(".png"): 
         # print(os.path.join(directory, filename))
-        PICTURE_DIC[f"Picture_{filename}"] =Path (f"{ROOT}/data/3ds_images/{filename}")
+        PATHNAME = Path (f"{ROOT}/data/3ds_images/{filename}")
+        PICTURE_ENCRYPT = encode(PATHNAME)
+        PICTURE_DIC[f"Picture_{filename}"] = PICTURE_ENCRYPT
         PIC_VARIABLE += 1
     else:
         continue
+
+EXPLAINER_NEW = re.sub("3ds_images/1915.png", f"data:image/png;base64,{PICTURE_DIC['Picture_1915.png']}", EXPLAINER_HTML)
+EXPLAINER_NEW = re.sub("3ds_images/1393.png", f"data:image/png;base64,{PICTURE_DIC['Picture_1393.png']}", EXPLAINER_NEW)
+EXPLAINER_NEW = re.sub("3ds_images/15698.png", f"data:image/png;base64,{PICTURE_DIC['Picture_15698.png']}", EXPLAINER_NEW)
+EXPLAINER_NEW = re.sub("3ds_images/12800.png", f"data:image/png;base64,{PICTURE_DIC['Picture_12800.png']}", EXPLAINER_NEW)

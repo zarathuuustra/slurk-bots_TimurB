@@ -9,7 +9,7 @@ import requests
 from templates import TaskBot
 
 from reference_eileen.config import (
-    EXPLAINER_HTML,
+    EXPLAINER_NEW,
     GUESSER_HTML,
     EMPTY_GRID,
     GRIDS,
@@ -469,7 +469,8 @@ class ReferenceBot(TaskBot):
         
         if user_id == self.sessions[room_id].explainer:
             logging.debug("The function send_instr is being used for the explainer...")
-            message = f"{EXPLAINER_HTML}"
+            message = f"{EXPLAINER_NEW}"
+            logging.debug(f"This is the EXPLAINER HTML: {EXPLAINER_NEW}")
             # The grid of the explainer is getting set as Target
             self.sio.emit(
                 "message_command",
@@ -502,17 +503,17 @@ class ReferenceBot(TaskBot):
         )
         sleep(1)
         
-        # Experimental
-        picture_string = encode(PIC1_PATH)
-        logging.debug(f"This is the string from the picture path: {picture_string}")
-        self.sio.emit(
-            "message_command",
-            {
-                "command": {"event": "update_grid4", "message": picture_string},
-                "room": room_id,
-                "receiver_id": user_id,
-            },
-        )
+        # # Experimental
+        # picture_string = encode(PIC1_PATH)
+        # logging.debug(f"This is the string from the picture path: {picture_string}")
+        # self.sio.emit(
+        #     "message_command",
+        #     {
+        #         "command": {"event": "update_grid4", "message": picture_string},
+        #         "room": room_id,
+        #         "receiver_id": user_id,
+        #     },
+        # )
 
     def load_next_game(self, room_id):
         # reset timer here?
@@ -591,7 +592,7 @@ class ReferenceBot(TaskBot):
     
     # experimental 
     def show_pictures(self, room_id, user_id):
-        picture_string = encode(PICTURE_DIC['Picture_8093.png'])
+        picture_string = PICTURE_DIC['Picture_8093.png']
         logging.debug(f"This is the string from the picture path: {picture_string}")
         for i in range(4):
             self.sio.emit(
