@@ -9,11 +9,15 @@ import requests
 from templates import TaskBot
 
 from reference_eileen.config import (
-    EXPLAINER_NEW,
-    GUESSER_HTML,
-    EMPTY_GRID,
-    GRIDS,
-    GRIDS_PER_ROOM,
+    EXPLAINER_NEW_3DS,
+    GUESSER_NEW_3DS,
+    EXPLAINER_NEW_TUNA,
+    GUESSER_NEW_TUNA,
+    EXPLAINER_NEW_MIXED,
+    GUESSER_NEW_MIXED,
+    EMPTY_GRID, #Wozu?
+    INSTANCES, # PICS_JSON
+    PICS_PER_ROOM, # PICS_PER_ROOM
     TASK_GREETING,
     COLOR_MESSAGE,
     STANDARD_COLOR,
@@ -25,13 +29,12 @@ from reference_eileen.config import (
     INPUT_FIELD_UNRESP_EXPLAINER,
     PICTURE_DIC,
 )
-from reference_eileen.dataloader import Dataloader
+from reference_eileen.dataloader import NewLoader
 from reference_eileen.grid import GridManager
 from reference_eileen.base64encode import encode_image_to_base64 as encode 
 
 TARGET_GRID_NAMES = {"1": "first", "2": "second", "3": "third"}
 LOG = logging.getLogger(__name__)
-
 
 class RoomTimer: # Funktionen des Timers
     def __init__(self, function, room_id):
@@ -70,13 +73,10 @@ class RoomTimer: # Funktionen des Timers
         )
         self.left_room[user].start()
 
-# für später: ich brauche keine grids; stattdessen Bilder
-
 class Session: # Die Session mit all ihren Inhalten
     def __init__(self):
         self.players = list()
-        self.grids = Dataloader(GRIDS, GRIDS_PER_ROOM)
-        self.grid_manager = GridManager(EMPTY_GRID)
+        self.grids = NewLoader(INSTANCES) # Umbenennen
         self.guesser = None
         self.explainer = None
         self.points = {
@@ -86,6 +86,7 @@ class Session: # Die Session mit all ihren Inhalten
         self.turn = None
         self.game_over = False
         self.timer = None
+        self.turn = 0
 
         self.button_number = 0
         # to make sure parallel processes of closing game do not interfere
@@ -126,7 +127,6 @@ class ReferenceBot(TaskBot):
         task took is created
         """
         room_id = data["room"]
-
         task_id = data["task"]
         logging.debug(f"A new task room was created with id: {data['room']}")
         logging.debug(f"A new task room was created with task id: {data['task']}")
@@ -168,10 +168,13 @@ class ReferenceBot(TaskBot):
 
             # 2) Choose an explainer/guesser
             self.assign_roles(room_id)
+            game_name = self.sessions[room_id].grids.data["GameName"]
+            logging.debug(f"This is the game name: {game_name}")
+            # self.sessions[room_id].grids.pop(0)
 
             # send_instructions
             for player in self.sessions[room_id].players:
-                self.send_instr(room_id, player["id"])
+                self.send_instr(room_id, player["id"], game_name)
             
             # So the explainer can send messages: 
             self.set_message_privilege(room_id, self.sessions[room_id].explainer, False) 
@@ -302,7 +305,7 @@ class ReferenceBot(TaskBot):
                             or other_usr["status"] != "ready"
                         ):
                             LOG.debug("RELOAD ONLY INSTR")
-                            self.send_instr(room_id, curr_usr["id"])
+                            self.send_instr(room_id, curr_usr["id"], self.sessions[room_id].grids.data["GameName"])
                         else:
                             LOG.debug("RESTART ROUND")
                             self.reload_state(room_id, curr_usr["id"])
@@ -400,10 +403,11 @@ class ReferenceBot(TaskBot):
                         f"<script> document.getElementById('Button{self.sessions[room_id].button_number}').disabled = true;</script>"
                         f"<script> document.getElementById('Button{self.sessions[room_id].button_number + 1}').disabled = true;</script>"
                         f"<script> document.getElementById('Button{self.sessions[room_id].button_number + 2}').disabled = true;</script>",
+                        f"<script> document.getElementById('Button{self.sessions[room_id].button_number + 3}').disabled = true;</script>",
                         room_id,
                         self.sessions[room_id].guesser,
                     )
-                    guess = data["command"]["answer"]
+                    guess = data["command"]["answer"] # The saved guess of the guesser 
                     LOG.debug(f"GUESS was {guess}")
 
                     self.log_event("guess", {"content": guess}, room_id)
@@ -463,14 +467,16 @@ class ReferenceBot(TaskBot):
                 curr_usr["id"],
             )
 
-    def send_instr(self, room_id, user_id):
+    def send_instr(self, room_id, user_id, game_name):
         """Sends the instruction html to the players (explainer and guesser)"""
-        # if the user_id is the explainer_id -> Explainer-HTML gets send
-        
         if user_id == self.sessions[room_id].explainer:
-            logging.debug("The function send_instr is being used for the explainer...")
-            message = f"{EXPLAINER_NEW}"
-            logging.debug(f"This is the EXPLAINER HTML: {EXPLAINER_NEW}")
+            if game_name == "3ds":
+                message = f"{EXPLAINER_NEW_3DS}"
+            elif game_name == "tuna":
+                message = f"{EXPLAINER_NEW_TUNA}"
+            else: 
+                message = f"{EXPLAINER_NEW_MIXED}"
+            # logging.debug(f"This is the EXPLAINER HTML: {EXPLAINER_NEW_3DS}")
             # The grid of the explainer is getting set as Target
             self.sio.emit(
                 "message_command",
@@ -482,7 +488,13 @@ class ReferenceBot(TaskBot):
             )
         # Otherwise it's the guesser -> Guesser-HTML is getting
         else:
-            message = f"{GUESSER_HTML}"
+            if game_name == "3ds":
+                message = f"{GUESSER_NEW_3DS}"
+            elif game_name == "tuna":
+                message = f"{GUESSER_NEW_TUNA}"
+            else: 
+                message = f"{GUESSER_NEW_MIXED}"
+            # logging.debug(f"This is the EXPLAINER HTML
             logging.debug("The function send_instr is being used for the guesser...")
 
         self.sio.emit(
@@ -517,7 +529,10 @@ class ReferenceBot(TaskBot):
 
     def load_next_game(self, room_id):
         # reset timer here?
+        self.sessions
         self.sessions[room_id].timer.reset()
+        self.sessions[room_id].round += 1
+        logging.debug(f"It's now turn {self.sessions[room_id].round}")
 
         # grid list gets smaller, next round starts
         self.sessions[room_id].grids.pop(0)
@@ -537,6 +552,8 @@ class ReferenceBot(TaskBot):
             self.set_message_privilege(room_id, user, True)
             self.give_writing_rights(room_id, user)
         grid_instance = self.sessions[room_id].grids[0]
+        logging.debug(f"This is the grid instance: {grid_instance}")
+        # if the person in the session is the explainer 
         if user == self.sessions[room_id].explainer:
             self.show_items(
                 room_id, grid_instance[:3], self.sessions[room_id].explainer
@@ -548,8 +565,9 @@ class ReferenceBot(TaskBot):
         if not self.sessions[room_id].grids:
             self.terminate_experiment(room_id)
             return
-
-        round_n = (GRIDS_PER_ROOM - len(self.sessions[room_id].grids)) + 1
+        blub = self.sessions[room_id].turn
+        logging.debug(f"Es ist die {blub} Runde")
+        round_n = blub + 1
         self.sessions[room_id].button_number = round_n * 3
 
         self.log_event("round", {"number": round_n}, room_id)
@@ -561,10 +579,10 @@ class ReferenceBot(TaskBot):
             f"Let's start round {round_n}, the grids are updated!",
             room_id,
         )
-        grid_instance = self.sessions[room_id].grids[0]
-        self.log_event("grid type", {"content": f"{grid_instance[6][1]}"}, room_id)
-        self.log_event("target grid", {"content": f"{grid_instance[7][1]}"}, room_id)
-        self.log_event("instance id", {"content": f"{grid_instance[8][1]}"}, room_id)
+        # grid_instance = self.sessions[room_id].grids[0]
+        # self.log_event("grid type", {"content": f"{grid_instance[6][1]}"}, room_id)
+        # self.log_event("target grid", {"content": f"{grid_instance[7][1]}"}, room_id)
+        # self.log_event("instance id", {"content": f"{grid_instance[8][1]}"}, room_id)
         self.show_pictures(room_id, self.sessions[room_id].explainer)
         self.show_pictures(room_id, self.sessions[room_id].guesser)
         # self.show_items(room_id, grid_instance[:3], self.sessions[room_id].explainer)
@@ -592,8 +610,8 @@ class ReferenceBot(TaskBot):
     
     # experimental 
     def show_pictures(self, room_id, user_id):
-        picture_string = PICTURE_DIC['Picture_8093.png']
-        logging.debug(f"This is the string from the picture path: {picture_string}")
+        picture_string = PICTURE_DIC['Picture_3DS_8093.png']
+        # logging.debug(f"This is the string from the picture path: {picture_string}")
         for i in range(4):
             self.sio.emit(
                 "message_command",
