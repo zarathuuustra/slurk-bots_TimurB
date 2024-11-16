@@ -5,7 +5,7 @@ import random
 from time import sleep
 from threading import Timer, Lock
 import requests
-
+import re
 from templates import TaskBot
 
 from reference_eileen.config import (
@@ -308,7 +308,7 @@ class ReferenceBot(TaskBot):
                             self.send_instr(room_id, curr_usr["id"], self.sessions[room_id].grids.data["GameName"])
                         else:
                             LOG.debug("RESTART ROUND")
-                            self.reload_state(room_id, curr_usr["id"])
+                            self.reload_state(room_id, curr_usr["id"], self.sessions[room_id].grids.data["GameName"])
 
                 elif event == "leave":
                     if self.sessions[room_id].game_over is False:
@@ -547,7 +547,7 @@ class ReferenceBot(TaskBot):
             return
 
         LOG.debug(f"Reload state for {user}")
-        self.send_instr(room_id, user)
+        self.send_instr(room_id, user, self.sessions[room_id].grids.data["GameName"])
         if self.sessions[room_id].turn == user:
             self.set_message_privilege(room_id, user, True)
             self.give_writing_rights(room_id, user)
@@ -583,8 +583,8 @@ class ReferenceBot(TaskBot):
         # self.log_event("grid type", {"content": f"{grid_instance[6][1]}"}, room_id)
         # self.log_event("target grid", {"content": f"{grid_instance[7][1]}"}, room_id)
         # self.log_event("instance id", {"content": f"{grid_instance[8][1]}"}, room_id)
-        self.show_pictures(room_id, self.sessions[room_id].explainer)
-        self.show_pictures(room_id, self.sessions[room_id].guesser)
+        self.show_pictures(room_id, self.sessions[room_id].explainer, round_n)
+        self.show_pictures(room_id, self.sessions[room_id].guesser, round_n)
         # self.show_items(room_id, grid_instance[:3], self.sessions[room_id].explainer)
         # self.show_items(room_id, grid_instance[3:6], self.sessions[room_id].guesser)
         self.send_message_to_user(
@@ -609,18 +609,76 @@ class ReferenceBot(TaskBot):
         self.sessions[room_id].timer.reset()
     
     # experimental 
-    def show_pictures(self, room_id, user_id):
-        picture_string = PICTURE_DIC['Picture_3DS_8093.png']
+    def show_pictures(self, room_id, user_id, round_nr):
+        picture_string = PICTURE_DIC['Picture_3ds_images/8093.png']
         # logging.debug(f"This is the string from the picture path: {picture_string}")
+        if user_id == self.sessions[room_id].explainer:
+            player = "player_1"
+            logging.debug("PLAYYYYER 1")
+        else:
+            player = "player_2"
+            logging.debug("PLAYYYYER 2")
+        # The paths of the picturesl, depending on round and player
+        pic_1 = self.sessions[room_id].grids.data[f"Runde_{round_nr}_{player}_first_image"]
+        pic_2 = self.sessions[room_id].grids.data[f"Runde_{round_nr}_{player}_second_image"]
+        pic_3 = self.sessions[room_id].grids.data[f"Runde_{round_nr}_{player}_third_image"]
+        pic_4 = self.sessions[room_id].grids.data[f"Runde_{round_nr}_{player}_fourth_image"]
+
+        logging.debug(f"This is pic_1 - BLUUUUUUB: {pic_1}")
+        logging.debug(f"This is pic_2 - BLUUUUUUB: {pic_2}")
+        logging.debug(f"This is pic_3 - BLUUUUUUB: {pic_3}")
+        logging.debug(f"This is pic_4 - BLUUUUUUB: {pic_4}")
+
+        variable = re.search("tuna_images", pic_1)
+        if variable != None:
+            logging.debug("I found a TUUUUUUUUNA")
+        else:
+            logging.debug("I found a 3DDDDDDDDS")
+        
+        pic_1_encrypt = PICTURE_DIC[f"Picture_{pic_1}"]
+        pic_2_encrypt = PICTURE_DIC[f"Picture_{pic_2}"]
+        pic_3_encrypt = PICTURE_DIC[f"Picture_{pic_3}"]
+        pic_4_encrypt = PICTURE_DIC[f"Picture_{pic_4}"]
+
+        # logging.debug(f"This is pic_1_test - BLUUUUUUB----TEST: {pic_test}")
+
         for i in range(4):
-            self.sio.emit(
+            if i == 0:
+                self.sio.emit(
                 "message_command",
                 {
-                    "command": {"event": f"update_grid{i+1}", "message": picture_string},
+                    "command": {"event": f"update_grid{i+1}", "message": pic_1_encrypt},
                     "room": room_id,
                     "receiver_id": user_id,
                 },
-            )
+                )
+            elif i == 1:
+                self.sio.emit(
+                "message_command",
+                {
+                    "command": {"event": f"update_grid{i+1}", "message": pic_2_encrypt},
+                    "room": room_id,
+                    "receiver_id": user_id,
+                },
+                )
+            elif i == 2:
+                self.sio.emit(
+                "message_command",
+                {
+                    "command": {"event": f"update_grid{i+1}", "message": pic_3_encrypt},
+                    "room": room_id,
+                    "receiver_id": user_id,
+                },
+                )
+            elif i == 3:
+                self.sio.emit(
+                "message_command",
+                {
+                    "command": {"event": f"update_grid{i+1}", "message": pic_4_encrypt},
+                    "room": room_id,
+                    "receiver_id": user_id,
+                },
+                )
 
     def show_items(self, room_id, grid_instance, user_id):
         for i in range(len(grid_instance)):

@@ -61,7 +61,7 @@ for filename in os.listdir(PATH_3DS):
         # print(os.path.join(directory, filename))
         PATHNAME = Path (f"{ROOT}/data/3ds_images/{filename}")
         PICTURE_ENCRYPT = encode(PATHNAME)
-        PICTURE_DIC[f"Picture_3DS_{filename}"] = PICTURE_ENCRYPT
+        PICTURE_DIC[f"Picture_3ds_images/{filename}"] = PICTURE_ENCRYPT
     else:
         continue
 
@@ -70,60 +70,60 @@ for filename in os.listdir(PATH_TUNA):
         # print(os.path.join(directory, filename))
         PATHNAME = Path (f"{ROOT}/data/tuna_images/{filename}")
         PICTURE_ENCRYPT = encode(PATHNAME)
-        PICTURE_DIC[f"Picture_TUNA_{filename}"] = PICTURE_ENCRYPT
+        PICTURE_DIC[f"Picture_tuna_images/{filename}"] = PICTURE_ENCRYPT
     else:
         continue
 
 # 3ds EXPLAINER HTML PICTURE CHANGE- Picture 1 = 1915.png, Picture 2 = 1393.png, Picture 3 = 15698.png, Picture 4 = 12800.png
-EXPLAINER_NEW_3DS = re.sub("3ds_images/1915.png", f"data:image/png;base64,{PICTURE_DIC['Picture_3DS_1915.png']}", EXPLAINER_OLD_3DS)
-EXPLAINER_NEW_3DS = re.sub("3ds_images/1393.png", f"data:image/png;base64,{PICTURE_DIC['Picture_3DS_1393.png']}", EXPLAINER_NEW_3DS)
-EXPLAINER_NEW_3DS = re.sub("3ds_images/15698.png", f"data:image/png;base64,{PICTURE_DIC['Picture_3DS_15698.png']}", EXPLAINER_NEW_3DS)
-EXPLAINER_NEW_3DS = re.sub("3ds_images/12800.png", f"data:image/png;base64,{PICTURE_DIC['Picture_3DS_12800.png']}", EXPLAINER_NEW_3DS)
+EXPLAINER_NEW_3DS = re.sub("3ds_images/1915.png", f"data:image/png;base64,{PICTURE_DIC['Picture_3ds_images/1915.png']}", EXPLAINER_OLD_3DS)
+EXPLAINER_NEW_3DS = re.sub("3ds_images/1393.png", f"data:image/png;base64,{PICTURE_DIC['Picture_3ds_images/1393.png']}", EXPLAINER_NEW_3DS)
+EXPLAINER_NEW_3DS = re.sub("3ds_images/15698.png", f"data:image/png;base64,{PICTURE_DIC['Picture_3ds_images/15698.png']}", EXPLAINER_NEW_3DS)
+EXPLAINER_NEW_3DS = re.sub("3ds_images/12800.png", f"data:image/png;base64,{PICTURE_DIC['Picture_3ds_images/12800.png']}", EXPLAINER_NEW_3DS)
 
 # 3ds GUESSER HTML PICTURE CHANGE - Picture 1 = 1915.png, Picture 2 = 1393.png, Picture 3 = 1393.png, Picture 4 = 12800.png
-GUESSER_NEW_3DS = re.sub("3ds_images/1915.png", f"data:image/png;base64,{PICTURE_DIC['Picture_3DS_1915.png']}", GUESSER_OLD_3DS)
-GUESSER_NEW_3DS = re.sub("3ds_images/1393.png", f"data:image/png;base64,{PICTURE_DIC['Picture_3DS_1393.png']}", GUESSER_NEW_3DS)
-GUESSER_NEW_3DS = re.sub("3ds_images/1393.png", f"data:image/png;base64,{PICTURE_DIC['Picture_3DS_1393.png']}", GUESSER_NEW_3DS)
-GUESSER_NEW_3DS = re.sub("3ds_images/12800.png", f"data:image/png;base64,{PICTURE_DIC['Picture_3DS_12800.png']}", GUESSER_NEW_3DS)
+GUESSER_NEW_3DS = re.sub("3ds_images/1915.png", f"data:image/png;base64,{PICTURE_DIC['Picture_3ds_images/1915.png']}", GUESSER_OLD_3DS)
+GUESSER_NEW_3DS = re.sub("3ds_images/1393.png", f"data:image/png;base64,{PICTURE_DIC['Picture_3ds_images/1393.png']}", GUESSER_NEW_3DS)
+GUESSER_NEW_3DS = re.sub("3ds_images/1393.png", f"data:image/png;base64,{PICTURE_DIC['Picture_3ds_images/1393.png']}", GUESSER_NEW_3DS)
+GUESSER_NEW_3DS = re.sub("3ds_images/12800.png", f"data:image/png;base64,{PICTURE_DIC['Picture_3ds_images/12800.png']}", GUESSER_NEW_3DS)
 
 # Tuna EXPLAINER HTML PICTURE CHANGE - Picture 1 = 13.png, Picture 2 = 42.png, Picture 3 = 53.png, Picture 4 = 23.png
-EXPLAINER_NEW_TUNA = re.sub("tuna_images/13.png", f"data:image/png;base64,{PICTURE_DIC['Picture_TUNA_13.png']}", EXPLAINER_OLD_TUNA)
-EXPLAINER_NEW_TUNA = re.sub("tuna_images/42.png", f"data:image/png;base64,{PICTURE_DIC['Picture_TUNA_42.png']}", EXPLAINER_NEW_TUNA)
-EXPLAINER_NEW_TUNA = re.sub("tuna_images/53.png", f"data:image/png;base64,{PICTURE_DIC['Picture_TUNA_53.png']}", EXPLAINER_NEW_TUNA)
-EXPLAINER_NEW_TUNA = re.sub("tuna_images/23.png", f"data:image/png;base64,{PICTURE_DIC['Picture_TUNA_23.png']}", EXPLAINER_NEW_TUNA)
+EXPLAINER_NEW_TUNA = re.sub("tuna_images/13.png", f"data:image/png;base64,{PICTURE_DIC['Picture_tuna_images/13.png']}", EXPLAINER_OLD_TUNA)
+EXPLAINER_NEW_TUNA = re.sub("tuna_images/42.png", f"data:image/png;base64,{PICTURE_DIC['Picture_tuna_images/42.png']}", EXPLAINER_NEW_TUNA)
+EXPLAINER_NEW_TUNA = re.sub("tuna_images/53.png", f"data:image/png;base64,{PICTURE_DIC['Picture_tuna_images/53.png']}", EXPLAINER_NEW_TUNA)
+EXPLAINER_NEW_TUNA = re.sub("tuna_images/23.png", f"data:image/png;base64,{PICTURE_DIC['Picture_tuna_images/23.png']}", EXPLAINER_NEW_TUNA)
 
 # Tuna GUESSER HTML PICTURE CHANGE - # Picture 1 = 13.png, Picture 2 = 42.png, Picture 3 = 53.png, Picture 4 = 23.png
-GUESSER_NEW_TUNA = re.sub("tuna_images/13.png", f"data:image/png;base64,{PICTURE_DIC['Picture_TUNA_13.png']}", GUESSER_OLD_TUNA)
-GUESSER_NEW_TUNA = re.sub("tuna_images/42.png", f"data:image/png;base64,{PICTURE_DIC['Picture_TUNA_42.png']}", GUESSER_NEW_TUNA)
-GUESSER_NEW_TUNA = re.sub("tuna_images/53.png", f"data:image/png;base64,{PICTURE_DIC['Picture_TUNA_53.png']}", GUESSER_NEW_TUNA)
-GUESSER_NEW_TUNA = re.sub("tuna_images/23.png", f"data:image/png;base64,{PICTURE_DIC['Picture_TUNA_23.png']}", GUESSER_NEW_TUNA)
+GUESSER_NEW_TUNA = re.sub("tuna_images/13.png", f"data:image/png;base64,{PICTURE_DIC['Picture_tuna_images/13.png']}", GUESSER_OLD_TUNA)
+GUESSER_NEW_TUNA = re.sub("tuna_images/42.png", f"data:image/png;base64,{PICTURE_DIC['Picture_tuna_images/42.png']}", GUESSER_NEW_TUNA)
+GUESSER_NEW_TUNA = re.sub("tuna_images/53.png", f"data:image/png;base64,{PICTURE_DIC['Picture_tuna_images/53.png']}", GUESSER_NEW_TUNA)
+GUESSER_NEW_TUNA = re.sub("tuna_images/23.png", f"data:image/png;base64,{PICTURE_DIC['Picture_tuna_images/23.png']}", GUESSER_NEW_TUNA)
 
 # MIXED EXPLAINER HTML PICTURE CHANGE
 # First row of pictures: Picture 1 = tuna_images/13.png, Picture 2 = tuna_images/42.png,
 # Picture 3 = tuna_images/53.png, Picture 4 = tuna_images/23.png
 # Second row of pictures: Picture 1 = 3ds_images/1915.png, Picture 2 = 3ds_images/6135.png,
 # Picture 3 = 3ds_images/15698.png, Picture 4 = 3ds_images/12800.png
-EXPLAINER_NEW_MIXED = re.sub("tuna_images/13.png", f"data:image/png;base64,{PICTURE_DIC['Picture_TUNA_13.png']}", EXPLAINER_OLD_MIXED)
-EXPLAINER_NEW_MIXED = re.sub("tuna_images/42.png", f"data:image/png;base64,{PICTURE_DIC['Picture_TUNA_42.png']}", EXPLAINER_NEW_MIXED)
-EXPLAINER_NEW_MIXED = re.sub("tuna_images/53.png", f"data:image/png;base64,{PICTURE_DIC['Picture_TUNA_53.png']}", EXPLAINER_NEW_MIXED)
-EXPLAINER_NEW_MIXED = re.sub("tuna_images/23.png", f"data:image/png;base64,{PICTURE_DIC['Picture_TUNA_23.png']}", EXPLAINER_NEW_MIXED)
+EXPLAINER_NEW_MIXED = re.sub("tuna_images/13.png", f"data:image/png;base64,{PICTURE_DIC['Picture_tuna_images/13.png']}", EXPLAINER_OLD_MIXED)
+EXPLAINER_NEW_MIXED = re.sub("tuna_images/42.png", f"data:image/png;base64,{PICTURE_DIC['Picture_tuna_images/42.png']}", EXPLAINER_NEW_MIXED)
+EXPLAINER_NEW_MIXED = re.sub("tuna_images/53.png", f"data:image/png;base64,{PICTURE_DIC['Picture_tuna_images/53.png']}", EXPLAINER_NEW_MIXED)
+EXPLAINER_NEW_MIXED = re.sub("tuna_images/23.png", f"data:image/png;base64,{PICTURE_DIC['Picture_tuna_images/23.png']}", EXPLAINER_NEW_MIXED)
 
-EXPLAINER_NEW_MIXED = re.sub("3ds_images/1915.png", f"data:image/png;base64,{PICTURE_DIC['Picture_3DS_1915.png']}", EXPLAINER_NEW_MIXED)
-EXPLAINER_NEW_MIXED = re.sub("3ds_images/6135.png", f"data:image/png;base64,{PICTURE_DIC['Picture_3DS_6135.png']}", EXPLAINER_NEW_MIXED)
-EXPLAINER_NEW_MIXED = re.sub("3ds_images/15698.png", f"data:image/png;base64,{PICTURE_DIC['Picture_3DS_15698.png']}", EXPLAINER_NEW_MIXED)
-EXPLAINER_NEW_MIXED = re.sub("3ds_images/12800.png", f"data:image/png;base64,{PICTURE_DIC['Picture_3DS_12800.png']}", EXPLAINER_NEW_MIXED)
+EXPLAINER_NEW_MIXED = re.sub("3ds_images/1915.png", f"data:image/png;base64,{PICTURE_DIC['Picture_3ds_images/1915.png']}", EXPLAINER_NEW_MIXED)
+EXPLAINER_NEW_MIXED = re.sub("3ds_images/6135.png", f"data:image/png;base64,{PICTURE_DIC['Picture_3ds_images/6135.png']}", EXPLAINER_NEW_MIXED)
+EXPLAINER_NEW_MIXED = re.sub("3ds_images/15698.png", f"data:image/png;base64,{PICTURE_DIC['Picture_3ds_images/15698.png']}", EXPLAINER_NEW_MIXED)
+EXPLAINER_NEW_MIXED = re.sub("3ds_images/12800.png", f"data:image/png;base64,{PICTURE_DIC['Picture_3ds_images/12800.png']}", EXPLAINER_NEW_MIXED)
 
 # MIXED GUESSER HTML PICTURE CHANGE
 # First row of pictures: Picture 1 = tuna_images/13.png, Picture 2 = tuna_images/42.png,
 # Picture 3 = tuna_images/53.png, Picture 4 = tuna_images/23.png
 # Second row of pictures: Picture 1 = 3ds_images/1915.png, Picture 2 = 3ds_images/1393.png,
 # Picture 3 = 3ds_images/1393.png, Picture 4 = 3ds_images/12800.png
-GUESSER_NEW_MIXED = re.sub("tuna_images/13.png", f"data:image/png;base64,{PICTURE_DIC['Picture_TUNA_13.png']}", GUESSER_OLD_MIXED)
-GUESSER_NEW_MIXED = re.sub("tuna_images/42.png", f"data:image/png;base64,{PICTURE_DIC['Picture_TUNA_42.png']}", GUESSER_NEW_MIXED)
-GUESSER_NEW_MIXED = re.sub("tuna_images/53.png", f"data:image/png;base64,{PICTURE_DIC['Picture_TUNA_53.png']}", GUESSER_NEW_MIXED)
-GUESSER_NEW_MIXED = re.sub("tuna_images/23.png", f"data:image/png;base64,{PICTURE_DIC['Picture_TUNA_23.png']}", GUESSER_NEW_MIXED)
+GUESSER_NEW_MIXED = re.sub("tuna_images/13.png", f"data:image/png;base64,{PICTURE_DIC['Picture_tuna_images/13.png']}", GUESSER_OLD_MIXED)
+GUESSER_NEW_MIXED = re.sub("tuna_images/42.png", f"data:image/png;base64,{PICTURE_DIC['Picture_tuna_images/42.png']}", GUESSER_NEW_MIXED)
+GUESSER_NEW_MIXED = re.sub("tuna_images/53.png", f"data:image/png;base64,{PICTURE_DIC['Picture_tuna_images/53.png']}", GUESSER_NEW_MIXED)
+GUESSER_NEW_MIXED = re.sub("tuna_images/23.png", f"data:image/png;base64,{PICTURE_DIC['Picture_tuna_images/23.png']}", GUESSER_NEW_MIXED)
 
-GUESSER_NEW_MIXED = re.sub("3ds_images/1915.png", f"data:image/png;base64,{PICTURE_DIC['Picture_3DS_1915.png']}", GUESSER_NEW_MIXED)
-GUESSER_NEW_MIXED = re.sub("3ds_images/1393.png", f"data:image/png;base64,{PICTURE_DIC['Picture_3DS_1393.png']}", GUESSER_NEW_MIXED)
-GUESSER_NEW_MIXED = re.sub("3ds_images/1393.png", f"data:image/png;base64,{PICTURE_DIC['Picture_3DS_1393.png']}", GUESSER_NEW_MIXED)
-GUESSER_NEW_MIXED = re.sub("3ds_images/12800.png", f"data:image/png;base64,{PICTURE_DIC['Picture_3DS_12800.png']}", GUESSER_NEW_MIXED)
+GUESSER_NEW_MIXED = re.sub("3ds_images/1915.png", f"data:image/png;base64,{PICTURE_DIC['Picture_3ds_images/1915.png']}", GUESSER_NEW_MIXED)
+GUESSER_NEW_MIXED = re.sub("3ds_images/1393.png", f"data:image/png;base64,{PICTURE_DIC['Picture_3ds_images/1393.png']}", GUESSER_NEW_MIXED)
+GUESSER_NEW_MIXED = re.sub("3ds_images/1393.png", f"data:image/png;base64,{PICTURE_DIC['Picture_3ds_images/1393.png']}", GUESSER_NEW_MIXED)
+GUESSER_NEW_MIXED = re.sub("3ds_images/12800.png", f"data:image/png;base64,{PICTURE_DIC['Picture_3ds_images/12800.png']}", GUESSER_NEW_MIXED)
