@@ -6,8 +6,33 @@ $(document).ready(function () {
                 case "send_instr":
                     $("#text_to_modify").html(data.command.message)
                     break;
-                case "mark_target_grid":
+                case "mark_target_picture_1":
                     $("#pic1_title").html(data.command.message)
+                    break;
+                case "mark_target_picture_2":
+                    $("#pic2_title").html(data.command.message)
+                    break;
+                case "mark_target_picture_3":
+                    $("#pic3_title").html(data.command.message)
+                    break;
+                case "mark_target_picture_4":
+                    $("#pic4_title").html(data.command.message)
+                    break;
+                case "unmark_target_picture_1":
+                    $("#pic1_title").html(data.command.message)
+                    console.log("Unmarking picture 1");
+                    break;
+                case "unmark_target_picture_2":
+                    $("#pic2_title").html(data.command.message)
+                    console.log("Unmarking picture 2");
+                    break;
+                case "unmark_target_picture_3":
+                    $("#pic3_title").html(data.command.message)
+                    console.log("Unmarking picture 3");
+                    break;
+                case "unmark_target_picture_4":
+                    $("#pic4_title").html(data.command.message)
+                    console.log("Unmarking picture 4");
                     break;
                 case "update_grid1":
                     console.log("Updating picture state 1");
@@ -43,6 +68,7 @@ function confirm_ready(answer){
 }
 
 function choose_grid(answer){
+    console.log("The grid which was the choooooosen one was:" + answer);
     socket.emit("message_command",
         {
             "command": {

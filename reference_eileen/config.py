@@ -28,9 +28,6 @@ with open(Path(f"{ROOT}/data/instructions/explainer_instr_mixed.html")) as html_
 with open(Path(f"{ROOT}/data/instructions/guesser_instr_mixed.html")) as html_guesser:
     GUESSER_OLD_MIXED = html_guesser.read()
 
-with open(Path(f"{ROOT}/data/empty_grid.html")) as html_guesser:
-    EMPTY_GRID = html_guesser.read()
-
 INSTANCES = Path(f"{ROOT}/data/slurk_instances.json")
 
 PICS_PER_ROOM = 6
