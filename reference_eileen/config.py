@@ -30,8 +30,6 @@ with open(Path(f"{ROOT}/data/instructions/guesser_instr_mixed.html")) as html_gu
 
 INSTANCES = Path(f"{ROOT}/data/slurk_instances.json")
 
-PICS_PER_ROOM = 6
-
 COLOR_MESSAGE = '<a style="color:{color};">{message}</a>'
 STANDARD_COLOR = "Purple"
 WARNING_COLOR = "FireBrick"

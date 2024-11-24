@@ -56,12 +56,11 @@
                   "layout-type": "div",
                   "id": "pic1_title",
                   "style": "max-width: 50%; height: auto; object-fit: contain; font-weight: bold;",
-                  "layout-content": "Grid 1"
+                  "layout-content": "Image 1"
                 },
                 {
                   "layout-type": "image",
                   "id": "pic1",
-                  "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/8/89/Kirchspiel%2C_R%C3%B6dder%2C_M%C3%A4usescheune_--_2014_--_2940-4.jpg/640px-Kirchspiel%2C_R%C3%B6dder%2C_M%C3%A4usescheune_--_2014_--_2940-4.jpg",
                   "style": "padding: 10px; margin: 10px;",
                   "layout-content": ""
                 }]},
@@ -76,7 +75,7 @@
                   "layout-type": "div",
                   "id": "pic2_title",
                   "style": "max-width: 50%; height: auto; object-fit: contain; font-weight: bold;",
-                  "layout-content": "Grid 2"
+                  "layout-content": "Image 2"
                 },
                 {
                   "layout-type": "image",
@@ -93,7 +92,7 @@
                   "layout-type": "div",
                   "id": "pic3_title",
                   "style": "max-width: 50%; height: auto; object-fit: contain; font-weight: bold;",
-                  "layout-content": "Grid 3"
+                  "layout-content": "Image 3"
                 },
                 {
                   "layout-type": "image",
@@ -110,7 +109,7 @@
                    "layout-type": "div",
                    "id": "pic4_title",
                    "style": "max-width: 50%; height: auto; object-fit: contain; font-weight: bold;",
-                   "layout-content": "Grid 4"
+                   "layout-content": "Image 4"
                  },
                  {
                    "layout-type": "image",

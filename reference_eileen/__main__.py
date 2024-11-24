@@ -16,7 +16,6 @@ from reference_eileen.config import (
     EXPLAINER_NEW_MIXED,
     GUESSER_NEW_MIXED,
     INSTANCES, # PICS_JSON
-    PICS_PER_ROOM, # PICS_PER_ROOM
     TASK_GREETING,
     COLOR_MESSAGE,
     STANDARD_COLOR,
@@ -29,12 +28,11 @@ from reference_eileen.config import (
     PICTURE_DIC,
 )
 from reference_eileen.dataloader import NewLoader
-from reference_eileen.base64encode import encode_image_to_base64 as encode 
 
-TARGET_GRID_NAMES = {"1": "first", "2": "second", "3": "third,", "4": "fourth,"}
 LOG = logging.getLogger(__name__)
 
-class RoomTimer: # Funktionen des Timers
+class RoomTimer:
+    """ Timer functions"""
     def __init__(self, function, room_id):
         self.function = function
         self.room_id = room_id
@@ -71,7 +69,8 @@ class RoomTimer: # Funktionen des Timers
         )
         self.left_room[user].start()
 
-class Session: # Die Session mit all ihren Inhalten
+class Session:
+    "Session variables and close function"
     def __init__(self):
         self.players = list()
         self.grids = NewLoader(INSTANCES)
@@ -95,6 +94,7 @@ class Session: # Die Session mit all ihren Inhalten
 
 
 class SessionManager(dict):
+    "Session Manager and its functions"
     waiting_room_timers = dict()
 
     def create_session(self, room_id):
@@ -107,6 +107,7 @@ class SessionManager(dict):
 
 
 class ReferenceBot(TaskBot):
+    "The Reference Bot and its functions"
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.received_waiting_token = set()
@@ -175,7 +176,6 @@ class ReferenceBot(TaskBot):
             elif game_name == "tuna":
                 self.sessions[room_id].maxturn = 9
             logging.debug(f"Maximum amount of turns = {self.sessions[room_id].maxturn}")
-            # self.sessions[room_id].grids.pop(0)
 
             # send_instructions
             for player in self.sessions[room_id].players:
@@ -189,9 +189,6 @@ class ReferenceBot(TaskBot):
 
             self.set_message_privilege(room_id, self.sessions[room_id].guesser, False)
             self.make_input_field_unresponsive(room_id, self.sessions[room_id].guesser)
-            # self.set_message_privilege(room_id,self.sessions[room_id].guesser, True)
-            # # assign writing rights to other user
-            # self.give_writing_rights(room_id, self.sessions[room_id].guesser)
 
     def assign_roles(self, room_id):
         """This function assigns roles to the players: explainer and guesser
@@ -232,7 +229,7 @@ class ReferenceBot(TaskBot):
                 self.send_message_to_user(
                     STANDARD_COLOR,
                     "Are you ready?"
-                    " Once you click on 'yes' you will see the grids. <br> <br>"
+                    " Once you click on 'yes' you will see the images. <br> <br>"
                     "<button class='message_button' onclick=\"confirm_ready('yes')\">YES</button> "
                     "<button class='message_button' onclick=\"confirm_ready('no')\">NO</button>",
                     room_id,
@@ -359,7 +356,7 @@ class ReferenceBot(TaskBot):
                 LOG.debug(f"Button{this_session.button_number}")
                 self.send_message_to_user(
                     STANDARD_COLOR,
-                    f" Click on the number of the grid the description above matches. <br> <br>"
+                    f" Click on the number of the image the description above matches. <br> <br>"
                     f"<button class='message_button' id='Button{this_session.button_number}' onclick=\"choose_grid('1')\">1</button> "
                     f"<button class='message_button' id='Button{this_session.button_number + 1}' onclick=\"choose_grid('2')\">2</button> "
                     f"<button class='message_button' id='Button{this_session.button_number + 2}' onclick=\"choose_grid('3')\">3</button> " 
@@ -481,17 +478,7 @@ class ReferenceBot(TaskBot):
                 message = f"{EXPLAINER_NEW_TUNA}"
             else: 
                 message = f"{EXPLAINER_NEW_MIXED}"
-            # logging.debug(f"This is the EXPLAINER HTML: {EXPLAINER_NEW_3DS}")
-            # The grid of the explainer is getting set as Target
-            # self.sio.emit(
-            #     "message_command",
-            #     {
-            #         "command": {"event": "mark_target_grid", "message": "Target grid"},
-            #         "room": room_id,
-            #         "receiver_id": user_id,
-            #     },
-            # )
-        # Otherwise it's the guesser -> Guesser-HTML is getting
+
         else:
             if game_name == "3ds":
                 message = f"{GUESSER_NEW_3DS}"
@@ -512,38 +499,25 @@ class ReferenceBot(TaskBot):
         )
         sleep(1)
         
-        # # Experimental
-        # picture_string = encode(PIC1_PATH)
-        # logging.debug(f"This is the string from the picture path: {picture_string}")
-        # self.sio.emit(
-        #     "message_command",
-        #     {
-        #         "command": {"event": "update_grid4", "message": picture_string},
-        #         "room": room_id,
-        #         "receiver_id": user_id,
-        #     },
-        # )
-    
     def mark_target_round(self, room_id, round_nr, user_id):
         """Marks the target picture"""
         starting_pos = self.sessions[room_id].target_pos
         target_thisround =  self.sessions[room_id].grids.data[f"Runde_{round_nr}_player_1_target_position"]
 
         if starting_pos == 0 or starting_pos == target_thisround: # Either 0 or 3=3
-            # Wenn Position neu ist, dann soll die alte Position gelöscht werden 
-            # Wenn Position alt ist, mach nichts; 
             logging.debug(f"Marking targets for round: {round_nr}")
             logging.debug(f"The target for the explainer this round is: {target_thisround}")
             # The target position is detetermined by the explainer
             self.sio.emit(
                 "message_command",
                 {
-                    "command": {"event": f"mark_target_picture_{target_thisround}", "message": "Target grid"},
+                    "command": {"event": f"mark_target_picture_{target_thisround}", "message": "Target Image"},
                     "room": room_id,
                     "receiver_id": user_id,
                 },
                 )
             self.sessions[room_id].target_pos = self.sessions[room_id].grids.data[f"Runde_{round_nr}_player_1_target_position"] # only import for when 0
+        
         elif starting_pos != target_thisround:
             # Delete target mark from previous target
             # Create new target
@@ -551,7 +525,7 @@ class ReferenceBot(TaskBot):
             self.sio.emit(
                 "message_command",
                 {
-                    "command": {"event": f"unmark_target_picture_{starting_pos}", "message": f"Grid {starting_pos}"},
+                    "command": {"event": f"unmark_target_picture_{starting_pos}", "message": f"Image {starting_pos}"},
                     "room": room_id,
                     "receiver_id": user_id,
                 },
@@ -559,7 +533,7 @@ class ReferenceBot(TaskBot):
             self.sio.emit(
                 "message_command",
                 {
-                    "command": {"event": f"mark_target_picture_{target_thisround}", "message": "Target grid"},
+                    "command": {"event": f"mark_target_picture_{target_thisround}", "message": "Target Image"},
                     "room": room_id,
                     "receiver_id": user_id,
                 },
@@ -568,7 +542,6 @@ class ReferenceBot(TaskBot):
 
     def load_next_game(self, room_id):
         """ Prepare for starting the next round for both players """
-        # reset timer here?
         self.sessions[room_id].timer.reset()
         if self.sessions[room_id].turn == self.sessions[room_id].maxturn:
             self.terminate_experiment(room_id)
@@ -576,24 +549,27 @@ class ReferenceBot(TaskBot):
         self.start_round(room_id)
 
     def reload_state(self, room_id, user, game_name):
-        """Restart the round for a player; if the round was already started """
+        """Restart the round for a player; if the ready was already initialised"""
         if self.sessions[room_id].turn == self.sessions[room_id].maxturn:
             self.terminate_experiment(room_id)
             return
 
         LOG.debug(f"Reload state for {user}")
+        explainer_num = self.sessions[room_id].explainer
+        guesser_num = self.sessions[room_id].guesser
         self.send_instr(room_id, user, game_name)
         self.set_message_privilege(room_id, user, True)
         self.give_writing_rights(room_id, user)
-        grid_instance = self.sessions[room_id].grids[0]
-        logging.debug(f"This is the grid instance: {grid_instance}")
-        # if the person in the session is the explainer 
-        if user == self.sessions[room_id].explainer:
-            self.show_items(
-                room_id, grid_instance[:3], self.sessions[room_id].explainer
-            )
+        logging.debug(f"This is how the explainer looks like: {explainer_num}")
+        logging.debug(f"This is how the guesser looks like: {guesser_num}")
+        
+        if user == explainer_num:
+            self.show_pictures(room_id, explainer_num, self.sessions[room_id].turn)
+            self.mark_target_round(room_id, self.sessions[room_id].turn, explainer_num)
         else:
-            self.show_items(room_id, grid_instance[3:6], self.sessions[room_id].guesser)
+            self.show_pictures(room_id, guesser_num, self.sessions[room_id].turn)
+            self.set_message_privilege(room_id, self.sessions[room_id].guesser, False)
+            self.make_input_field_unresponsive(room_id, self.sessions[room_id].guesser)
 
     def start_round(self, room_id):
         """ Start the round x for both players"""
@@ -611,7 +587,7 @@ class ReferenceBot(TaskBot):
 
         self.send_message_to_user(
             STANDARD_COLOR,
-            f"Let's start round {self.sessions[room_id].turn}, the grids are updated!",
+            f"Let's start round {self.sessions[room_id].turn}, the images are updated!",
             room_id,
         )
         # grid_instance = self.sessions[room_id].grids[0]
@@ -621,8 +597,6 @@ class ReferenceBot(TaskBot):
         self.show_pictures(room_id, self.sessions[room_id].explainer, self.sessions[room_id].turn)
         self.show_pictures(room_id, self.sessions[room_id].guesser, self.sessions[room_id].turn)
         self.mark_target_round(room_id, self.sessions[room_id].turn, self.sessions[room_id].explainer)
-        # self.show_items(room_id, grid_instance[:3], self.sessions[room_id].explainer)
-        # self.show_items(room_id, grid_instance[3:6], self.sessions[room_id].guesser)
         self.send_message_to_user(
             STANDARD_COLOR,
             "Generate the description for the given target.",
@@ -647,7 +621,6 @@ class ReferenceBot(TaskBot):
     # experimental 
     def show_pictures(self, room_id, user_id, round_nr):
         """This function sends out the picture for each player"""
-        picture_string = PICTURE_DIC['Picture_3ds_images/8093.png']
         # logging.debug(f"This is the string from the picture path: {picture_string}")
         if user_id == self.sessions[room_id].explainer:
             player = "player_1"
@@ -676,8 +649,6 @@ class ReferenceBot(TaskBot):
         pic_2_encrypt = PICTURE_DIC[f"Picture_{pic_2}"]
         pic_3_encrypt = PICTURE_DIC[f"Picture_{pic_3}"]
         pic_4_encrypt = PICTURE_DIC[f"Picture_{pic_4}"]
-
-        # logging.debug(f"This is pic_1_test - BLUUUUUUB----TEST: {pic_test}")
 
         for i in range(4):
             if i == 0:
@@ -716,21 +687,6 @@ class ReferenceBot(TaskBot):
                     "receiver_id": user_id,
                 },
                 )
-
-    def show_items(self, room_id, grid_instance, user_id):
-        for i in range(len(grid_instance)):
-            updated_grid = self.sessions[room_id].grid_manager.update_grid(
-                grid_instance[i][1]
-            )
-            logging.debug(f"THE GRID: {updated_grid}")
-            self.sio.emit(
-                "message_command",
-                {
-                    "command": {"event": f"update_grid{i+1}", "message": updated_grid},
-                    "room": room_id,
-                    "receiver_id": user_id,
-                },
-            )
 
     def send_message_to_user(self, color, message, room, receiver=None):
         if receiver:
@@ -1024,8 +980,6 @@ def correct_guess(self, room_id, round_nr, guess):
         result = False
     return result
 
-# correct_guess = self.sessions[room_id].grids.data[f"Runde_{round_nr}_player_2_target_position"]
-# correct_target_explainer = self.sessions[room_id].grids.data[f"Runde_{round_nr}_player_1_target_position"]
 if __name__ == "__main__":
     # set up logging configuration
     logging.basicConfig(level=logging.DEBUG, format="%(levelname)s:%(message)s")

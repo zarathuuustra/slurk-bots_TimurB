@@ -1,17 +1,5 @@
 import json
 import random
-from pathlib import Path
-
-# ROOT = Path(__file__).parent.resolve()
-# JSON_PATH = Path(f"{ROOT}/slurk_instances.json")
-# with open(JSON_PATH, "r") as f:
-#     DOCUMENT = json.load(f)
-
-# print(DOCUMENT)
-
-# new_doc = random.shuffle(DOCUMENT)
-
-# print(new_doc)
 
 class NewLoader:
      def __init__(self, path):
