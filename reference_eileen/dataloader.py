@@ -29,9 +29,9 @@ class NewLoader:
           round_nr = 0
           random_int = random.randint(0,2)
           document = self._read_json_file()
-          print(f"Die zweite Zahl ist: {random_int}")
           round_dic = {}
           round_dic["GameName"] = name
+          round_dic["Experiment_Id"] = random_int
           for experiment_category in document["experiments"]:
                if experiment_category["name"] != name:  # 1. Namenswahl
                     continue
@@ -40,18 +40,21 @@ class NewLoader:
                          if experiment["experiment_id"] == random_int or experiment_category["name"] == "mixed": # 3. Eines von drei Experimenten zufällig auswählen
                               for exp_round in experiment["game_instances"]:
                                    round_nr += 1
+                                   round_dic[f"Runde_{round_nr}_stimuli_id"] = exp_round["stimuli_id"]
+                                   round_dic[f"Runde_{round_nr}_game_id"] = exp_round["game_id"]
+
                                    round_dic[f"Runde_{round_nr}_player_1_first_image"] = exp_round["player_1_first_image"]
                                    round_dic[f"Runde_{round_nr}_player_1_second_image"] = exp_round["player_1_second_image"]
                                    round_dic[f"Runde_{round_nr}_player_1_third_image"] = exp_round["player_1_third_image"]
                                    round_dic[f"Runde_{round_nr}_player_1_fourth_image"] = exp_round["player_1_fourth_image"]
                                    round_dic[f"Runde_{round_nr}_player_1_target_position"] = exp_round["player_1_target_position"]
+                                   
 
                                    round_dic[f"Runde_{round_nr}_player_2_first_image"] = exp_round["player_2_first_image"]
                                    round_dic[f"Runde_{round_nr}_player_2_second_image"] = exp_round["player_2_second_image"]
                                    round_dic[f"Runde_{round_nr}_player_2_third_image"] = exp_round["player_2_third_image"]
                                    round_dic[f"Runde_{round_nr}_player_2_fourth_image"] = exp_round["player_2_fourth_image"]
                                    round_dic[f"Runde_{round_nr}_player_2_target_position"] = exp_round["player_2_target_position"]
-                                   print(f"Ich hatte {round_nr} exp_rounds.") # Rundenanzahl   
                          else: 
                               continue
           return round_dic

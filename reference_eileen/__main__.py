@@ -168,6 +168,7 @@ class ReferenceBot(TaskBot):
             # 2) Choose an explainer/guesser
             self.assign_roles(room_id)
             game_name = self.sessions[room_id].grids.data["GameName"]
+            self.log_event("game_name", {"content": f"{game_name}"}, room_id)
             logging.debug(f"This is the game name: {game_name}")
             if game_name == "mixed":
                 self.sessions[room_id].maxturn = 6
@@ -193,6 +194,9 @@ class ReferenceBot(TaskBot):
     def assign_roles(self, room_id):
         """This function assigns roles to the players: explainer and guesser
         """
+        experiment_id = self.sessions[room_id].grids.data[f"Experiment_Id"]
+        logging.debug(f"This is the experiment_id: {experiment_id}")
+        self.log_event("Experiment_Id", {"content": f"{experiment_id}"}, room_id)
         # assuming there are 2 players
         session = self.sessions[room_id]
 
@@ -349,9 +353,6 @@ class ReferenceBot(TaskBot):
                 self.make_input_field_unresponsive(
                     room_id, self.sessions[room_id].explainer
                 )
-                # self.set_message_privilege(room_id,self.sessions[room_id].guesser, True)
-                # # assign writing rights to other user
-                # self.give_writing_rights(room_id, self.sessions[room_id].guesser)
 
                 LOG.debug(f"Button{this_session.button_number}")
                 self.send_message_to_user(
@@ -503,6 +504,7 @@ class ReferenceBot(TaskBot):
         """Marks the target picture"""
         starting_pos = self.sessions[room_id].target_pos
         target_thisround =  self.sessions[room_id].grids.data[f"Runde_{round_nr}_player_1_target_position"]
+        self.log_event("target_explainer", {"content": f"{target_thisround}"}, room_id)
 
         if starting_pos == 0 or starting_pos == target_thisround: # Either 0 or 3=3
             logging.debug(f"Marking targets for round: {round_nr}")
@@ -573,16 +575,14 @@ class ReferenceBot(TaskBot):
 
     def start_round(self, room_id):
         """ Start the round x for both players"""
-        # user_id = self.data["user"]["id"]
         if self.sessions[room_id].turn == self.sessions[room_id].maxturn:
             self.terminate_experiment(room_id)
             return
         self.sessions[room_id].turn += 1
         logging.debug(f"Es ist die {self.sessions[room_id].turn} Runde")
-        # self.sessions[room_id].button_number = round_n * 3
 
-        self.log_event("round", {"number": self.sessions[room_id].turn}, room_id)
         # in this game 1 round consists of only 1 turn!
+        self.log_event("round", {"number": self.sessions[room_id].turn}, room_id)
         self.log_event("turn", dict(), room_id)
 
         self.send_message_to_user(
@@ -594,6 +594,8 @@ class ReferenceBot(TaskBot):
         # self.log_event("grid type", {"content": f"{grid_instance[6][1]}"}, room_id)
         # self.log_event("target grid", {"content": f"{grid_instance[7][1]}"}, room_id)
         # self.log_event("instance id", {"content": f"{grid_instance[8][1]}"}, room_id)
+        
+        
         self.show_pictures(room_id, self.sessions[room_id].explainer, self.sessions[room_id].turn)
         self.show_pictures(room_id, self.sessions[room_id].guesser, self.sessions[room_id].turn)
         self.mark_target_round(room_id, self.sessions[room_id].turn, self.sessions[room_id].explainer)
@@ -624,26 +626,36 @@ class ReferenceBot(TaskBot):
         # logging.debug(f"This is the string from the picture path: {picture_string}")
         if user_id == self.sessions[room_id].explainer:
             player = "player_1"
+            log_name = "explainer"
             logging.debug("PLAYYYYER 1")
         else:
             player = "player_2"
+            log_name = "guesser"
             logging.debug("PLAYYYYER 2")
-        # The paths of the picturesl, depending on round and player
+        stimuli_id = self.sessions[room_id].grids.data[f"Runde_{round_nr}_stimuli_id"]
+        game_id = self.sessions[room_id].grids.data[f"Runde_{round_nr}_game_id"]
+        self.log_event("game_id", {"content": f"{game_id}"}, room_id)
+        self.log_event("stimuli_id", {"content": f"{stimuli_id}"}, room_id)
+        
+        # The paths of the pictures, depending on round and player
         pic_1 = self.sessions[room_id].grids.data[f"Runde_{round_nr}_{player}_first_image"]
         pic_2 = self.sessions[room_id].grids.data[f"Runde_{round_nr}_{player}_second_image"]
         pic_3 = self.sessions[room_id].grids.data[f"Runde_{round_nr}_{player}_third_image"]
         pic_4 = self.sessions[room_id].grids.data[f"Runde_{round_nr}_{player}_fourth_image"]
+        all_pic = [pic_1, pic_2, pic_3, pic_4]
 
-        logging.debug(f"This is pic_1 - BLUUUUUUB: {pic_1}")
-        logging.debug(f"This is pic_2 - BLUUUUUUB: {pic_2}")
-        logging.debug(f"This is pic_3 - BLUUUUUUB: {pic_3}")
-        logging.debug(f"This is pic_4 - BLUUUUUUB: {pic_4}")
+        logging.debug(f"This is pic_1: {pic_1}")
+        logging.debug(f"This is pic_2: {pic_2}")
+        logging.debug(f"This is pic_3: {pic_3}")
+        logging.debug(f"This is pic_4: {pic_4}")
+         
+        self.log_event(f"pictures_round_{round_nr}_for_{log_name}", {"content": f"{all_pic}"}, room_id)
 
         variable = re.search("tuna_images", pic_1)
         if variable != None:
-            logging.debug("I found a TUUUUUUUUNA")
+            logging.debug("I found a Tuna")
         else:
-            logging.debug("I found a 3DDDDDDDDS")
+            logging.debug("I found a 3ds")
         
         pic_1_encrypt = PICTURE_DIC[f"Picture_{pic_1}"]
         pic_2_encrypt = PICTURE_DIC[f"Picture_{pic_2}"]
@@ -970,10 +982,13 @@ class ReferenceBot(TaskBot):
 
 def correct_guess(self, room_id, round_nr, guess):
     """ Analyses if the answer is correct"""
+    
+    right_answer = self.sessions[room_id].grids.data[f"Runde_{round_nr}_player_2_target_position"] # Any number between 1 and 4
     logging.debug(f"The function correct_guess was used. It's round: {round_nr}")
     logging.debug(f"The function correct_guess was used. The guess of the guesser is: {guess}")
-    right_answer = self.sessions[room_id].grids.data[f"Runde_{round_nr}_player_2_target_position"] # Any number between 1 and 4
     logging.debug(f"The right answer is...{right_answer}")
+    self.log_event("target_guesser", {"content": f"{right_answer}"}, room_id)
+
     if guess == right_answer:
         result = True
     else:
