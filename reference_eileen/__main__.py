@@ -5,7 +5,7 @@ import random
 from time import sleep
 from threading import Timer, Lock
 import requests
-import re
+# deleted the re
 from templates import TaskBot
 
 from reference_eileen.config import (
@@ -646,12 +646,6 @@ class ReferenceBot(TaskBot):
         logging.debug(f"This is pic_4: {pic_4}")
          
         self.log_event(f"pictures_round_{round_nr}_for_{log_name}", {"content": f"{all_pic}"}, room_id)
-
-        variable = re.search("tuna_images", pic_1)
-        if variable != None:
-            logging.debug("I found a Tuna")
-        else:
-            logging.debug("I found a 3ds")
         
         pic_1_encrypt = PICTURE_DIC[f"Picture_{pic_1}"]
         pic_2_encrypt = PICTURE_DIC[f"Picture_{pic_2}"]
