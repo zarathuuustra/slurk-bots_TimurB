@@ -56,6 +56,7 @@ $(document).ready(function () {
 })
 
 function confirm_ready(answer){
+    console.log("The ready-button was clicked by a user! The answer was:" + answer);
     socket.emit("message_command",
         {
             "command": {
