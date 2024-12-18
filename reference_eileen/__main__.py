@@ -183,13 +183,11 @@ class ReferenceBot(TaskBot):
                 self.send_instr(room_id, player["id"], game_name)
             
             # So the explainer can send messages: 
-            self.set_message_privilege(room_id, self.sessions[room_id].explainer, False) 
-            self.make_input_field_unresponsive(
-                room_id, self.sessions[room_id].explainer
-            )
+            # self.set_message_privilege(room_id, self.sessions[room_id].explainer, False) 
+            # self.make_input_field_unresponsive(room_id, self.sessions[room_id].explainer)
 
-            self.set_message_privilege(room_id, self.sessions[room_id].guesser, False)
-            self.make_input_field_unresponsive(room_id, self.sessions[room_id].guesser)
+            # self.set_message_privilege(room_id, self.sessions[room_id].guesser, False)
+            # self.make_input_field_unresponsive(room_id, self.sessions[room_id].guesser)
 
     def assign_roles(self, room_id):
         """This function assigns roles to the players: explainer and guesser
@@ -245,6 +243,8 @@ class ReferenceBot(TaskBot):
             event = data["type"]
             user = data["user"]
             user_id = data["user"]["id"]
+            logging.debug("Inside status function")
+            logging.debug(f"Inside status function: room_id {room_id}, event {event}, user {user}, user_id {user_id}")
 
             # check whether the user is eligible to join this task
             task = requests.get(
@@ -439,6 +439,11 @@ class ReferenceBot(TaskBot):
                         self.log_event("false guess", {"content": guess}, room_id)
 
                     self.load_next_game(room_id)
+            elif isinstance(data["command"], str):
+                logging.error(f"User command: {data}")
+                if data["command"] == "accept":
+                    logging.debug("The user has accepted the instructions.")
+                    self._command_ready(room_id, user_id)
 
     def _command_ready(self, room_id, user):
         """Must be sent to begin a conversation."""
