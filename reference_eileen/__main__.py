@@ -5,7 +5,7 @@ import random
 from time import sleep
 from threading import Timer, Lock
 import requests
-# deleted the re
+
 from templates import TaskBot
 
 from reference_eileen.config import (
@@ -387,6 +387,7 @@ class ReferenceBot(TaskBot):
                 event = data["command"]["event"]
                 if event == "confirm_ready":
                     if data["command"]["answer"] == "yes":
+                        logging.debug("The button was clicked and the answer is yes: this is proof ")
                         self._command_ready(room_id, user_id)
                     elif data["command"]["answer"] == "no":
                         self.send_message_to_user(
@@ -619,7 +620,7 @@ class ReferenceBot(TaskBot):
     # experimental 
     def show_pictures(self, room_id, user_id, round_nr):
         """This function sends out the picture for each player"""
-        # logging.debug(f"This is the string from the picture path: {picture_string}")
+        
         if user_id == self.sessions[room_id].explainer:
             player = "player_1"
             log_name = "explainer"
@@ -776,6 +777,7 @@ class ReferenceBot(TaskBot):
         """move the central divider and resize chat and task area
         the sum of char_area and task_area must sum up to 100
         """
+        logging.debug("The move_devider function was used.")
         if chat_area + task_area != 100:
             LOG.error("Could not resize chat and task area: invalid parameters.")
             raise ValueError("chat_area and task_area must sum up to 100")
