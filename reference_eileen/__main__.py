@@ -228,7 +228,7 @@ class ReferenceBot(TaskBot):
                             "html": True,
                         },
                     )
-                sleep(1)
+                sleep(5)
 
                 self.send_message_to_user(
                     STANDARD_COLOR,
@@ -371,6 +371,10 @@ class ReferenceBot(TaskBot):
             """Parse user commands."""
             room_id = data["room"]
             user_id = data["user"]["id"]
+            logging.debug(f"The room id: {room_id}")
+            logging.debug(f"The user id: {user_id}")
+            logging.debug(f"self user: {self.user}")
+            logging.debug(f"self.sessions: {room_id}")
 
             # do not process commands from itself/make sure session exists
             if room_id not in self.sessions or user_id == self.user:
