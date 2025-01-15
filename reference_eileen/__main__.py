@@ -523,12 +523,12 @@ class ReferenceBot(TaskBot):
             self.sio.emit(
                 "message_command",
                 {
-                    "command": {"event": f"mark_target_picture_{target_thisround}", "message": "Target Image"},
+                    "command": {"event": f"mark_target_picture_{target_thisround}", "message": "X"},
                     "room": room_id,
                     "receiver_id": user_id,
                 },
                 )
-            self.sessions[room_id].target_pos = self.sessions[room_id].grids.data[f"Runde_{round_nr}_player_1_target_position"] # only import for when 0
+            self.sessions[room_id].target_pos = self.sessions[room_id].grids.data[f"Runde_{round_nr}_player_1_target_position"] # only important for when 0
         
         elif starting_pos != target_thisround:
             # Delete target mark from previous target
@@ -545,7 +545,7 @@ class ReferenceBot(TaskBot):
             self.sio.emit(
                 "message_command",
                 {
-                    "command": {"event": f"mark_target_picture_{target_thisround}", "message": "Target Image"},
+                    "command": {"event": f"mark_target_picture_{target_thisround}", "message": "X"},
                     "room": room_id,
                     "receiver_id": user_id,
                 },
@@ -607,7 +607,7 @@ class ReferenceBot(TaskBot):
         self.mark_target_round(room_id, self.sessions[room_id].turn, self.sessions[room_id].explainer)
         self.send_message_to_user(
             STANDARD_COLOR,
-            "Generate the description for the given target.",
+            "Generate the description for the given X.",
             room_id,
             self.sessions[room_id].explainer,
         )
