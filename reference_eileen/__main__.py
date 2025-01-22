@@ -26,6 +26,7 @@ from reference_eileen.config import (
     INPUT_FIELD_UNRESP_GUESSER,
     INPUT_FIELD_UNRESP_EXPLAINER,
     PICTURE_DIC,
+    BIG_PIC_CONTAINER,
 )
 from reference_eileen.dataloader import NewLoader
 
@@ -626,18 +627,22 @@ class ReferenceBot(TaskBot):
         self.make_input_field_unresponsive(room_id, self.sessions[room_id].guesser)
         self.sessions[room_id].timer.reset()
     
-    # experimental 
     def show_pictures(self, room_id, user_id, round_nr):
         """This function sends out the picture for each player"""
-        
+
         if user_id == self.sessions[room_id].explainer:
             player = "player_1"
             log_name = "explainer"
-            logging.debug("PLAYYYYER 1")
+            logging.debug("Player 1 gets the pictures")
+            logging.debug(f"room_id: {self.sessions[room_id].explainer}")
+
         else:
             player = "player_2"
             log_name = "guesser"
-            logging.debug("PLAYYYYER 2")
+            logging.debug("Player 2 gets the pictures")
+            logging.debug(f"room_id: {self.sessions[room_id].guesser}")
+        
+        game_name = self.sessions[room_id].grids.data["GameName"]
         stimuli_id = self.sessions[room_id].grids.data[f"Runde_{round_nr}_stimuli_id"]
         game_id = self.sessions[room_id].grids.data[f"Runde_{round_nr}_game_id"]
         self.log_event("game_id", {"content": f"{game_id}"}, room_id)
@@ -654,13 +659,45 @@ class ReferenceBot(TaskBot):
         logging.debug(f"This is pic_2: {pic_2}")
         logging.debug(f"This is pic_3: {pic_3}")
         logging.debug(f"This is pic_4: {pic_4}")
-         
+        
+        turn_now = self.sessions[room_id].turn
+        size_var_1 = False
+        size_var_2 = False
+        size_var_3 = False
+        size_var_4 = False
+        if pic_1 in BIG_PIC_CONTAINER:
+            logging.debug(f"Das Bild {pic_1} ist groß!")
+            size_var_1 = True
+        else:
+            logging.debug(f"Das Bild {pic_1} ist klein! (Oder aus einem anderen Spiel)")
+        
+        if pic_2 in BIG_PIC_CONTAINER:
+            logging.debug(f"Das Bild {pic_2} ist groß!")
+            size_var_2 = True
+        else:
+            logging.debug(f"Das Bild {pic_2} ist klein! (Oder aus einem anderen Spiel)")
+            
+        
+        if pic_3 in BIG_PIC_CONTAINER:
+            logging.debug(f"Das Bild {pic_3} ist groß!")
+            size_var_3 = True
+        else:
+            logging.debug(f"Das Bild {pic_3} ist klein! (Oder aus einem anderen Spiel)")
+        
+        if pic_4 in BIG_PIC_CONTAINER:
+            logging.debug(f"Das Bild {pic_4} ist groß!")
+            size_var_4 = True
+        else:
+            logging.debug(f"Das Bild {pic_4} ist klein! (Oder aus einem anderen Spiel)")
+        
         self.log_event(f"pictures_round_{round_nr}_for_{log_name}", {"content": f"{all_pic}"}, room_id)
         
         pic_1_encrypt = PICTURE_DIC[f"Picture_{pic_1}"]
         pic_2_encrypt = PICTURE_DIC[f"Picture_{pic_2}"]
         pic_3_encrypt = PICTURE_DIC[f"Picture_{pic_3}"]
         pic_4_encrypt = PICTURE_DIC[f"Picture_{pic_4}"]
+
+        logging.debug(f"Für den Spieler {user_id} ist das hier die room_id: {room_id}")
 
         for i in range(4):
             if i == 0:
@@ -672,6 +709,21 @@ class ReferenceBot(TaskBot):
                     "receiver_id": user_id,
                 },
                 )
+                if size_var_1:
+                    self.resize_big_pictures(room_id, user_id, pic_number=1) # experimental
+                    logging.debug(f"Das Bild 1 wurde groß gemacht")
+                elif game_name == "tuna" and not size_var_1:
+                    self.resize_small_pictures(room_id, user_id, pic_number=1)
+                    logging.debug(f"Das Bild 1 wurde klein gemacht")
+                elif game_name == "3ds":
+                    self.resize_big_pictures(room_id, user_id, pic_number=1)
+                    logging.debug(f"Das Bild 1 wurde groß gemacht")
+                elif game_name == "mixed" and turn_now <= 3:
+                    self.resize_small_pictures(room_id, user_id, pic_number=1)
+                    logging.debug(f"Das Bild 1 wurde groß gemacht")
+                else:
+                    self.resize_big_pictures(room_id, user_id, pic_number=1)
+                    logging.debug(f"Das Bild 1 wurde klein gemacht")
             elif i == 1:
                 self.sio.emit(
                 "message_command",
@@ -681,6 +733,21 @@ class ReferenceBot(TaskBot):
                     "receiver_id": user_id,
                 },
                 )
+                if size_var_2:
+                    self.resize_big_pictures(room_id, user_id, pic_number=2) # experimental
+                    logging.debug(f"Das Bild 2 wurde groß gemacht")
+                elif game_name == "tuna" and not size_var_2:
+                    self.resize_small_pictures(room_id, user_id, pic_number=2)
+                    logging.debug(f"Das Bild 2 wurde klein gemacht")
+                elif game_name == "3ds":
+                    self.resize_big_pictures(room_id, user_id, pic_number=2)
+                    logging.debug(f"Das Bild 2 wurde groß gemacht")
+                elif game_name == "mixed" and turn_now <= 3:
+                    self.resize_small_pictures(room_id, user_id, pic_number=2)
+                    logging.debug(f"Das Bild 2 wurde groß gemacht")
+                else:
+                    self.resize_big_pictures(room_id, user_id, pic_number=2)
+                    logging.debug(f"Das Bild 2 wurde klein gemacht")
             elif i == 2:
                 self.sio.emit(
                 "message_command",
@@ -690,6 +757,21 @@ class ReferenceBot(TaskBot):
                     "receiver_id": user_id,
                 },
                 )
+                if size_var_3:
+                    self.resize_big_pictures(room_id, user_id, pic_number=3) # experimental
+                    logging.debug(f"Das Bild 3 wurde groß gemacht")
+                elif game_name == "tuna" and not size_var_3:
+                    self.resize_small_pictures(room_id, user_id, pic_number=3)
+                    logging.debug(f"Das Bild 3 wurde klein gemacht")
+                elif game_name == "3ds":
+                    self.resize_big_pictures(room_id, user_id, pic_number=3)
+                    logging.debug(f"Das Bild 3 wurde groß gemacht")
+                elif game_name == "mixed" and turn_now <= 3:
+                    self.resize_small_pictures(room_id, user_id, pic_number=3)
+                    logging.debug(f"Das Bild 3 wurde groß gemacht")
+                else:
+                    self.resize_big_pictures(room_id, user_id, pic_number=3)
+                    logging.debug(f"Das Bild 3 wurde klein gemacht")
             elif i == 3:
                 self.sio.emit(
                 "message_command",
@@ -699,6 +781,21 @@ class ReferenceBot(TaskBot):
                     "receiver_id": user_id,
                 },
                 )
+                if size_var_4:
+                    self.resize_big_pictures(room_id, user_id, pic_number=4) # experimental
+                    logging.debug(f"Das Bild 4 wurde groß gemacht")
+                elif game_name == "tuna" and not size_var_4:
+                    self.resize_small_pictures(room_id, user_id, pic_number=4)
+                    logging.debug(f"Das Bild 4 wurde klein gemacht")
+                elif game_name == "3ds":
+                    self.resize_big_pictures(room_id, user_id, pic_number=4)
+                    logging.debug(f"Das Bild 4 wurde groß gemacht")
+                elif game_name == "mixed" and turn_now <= 3:
+                    self.resize_small_pictures(room_id, user_id, pic_number=4)
+                    logging.debug(f"Das Bild 4 wurde groß gemacht")
+                else:
+                    self.resize_big_pictures(room_id, user_id, pic_number=4)
+                    logging.debug(f"Das Bild 4 wurde klein gemacht")
 
     def send_message_to_user(self, color, message, room, receiver=None):
         if receiver:
@@ -765,7 +862,7 @@ class ReferenceBot(TaskBot):
             room["id"],
             user["id"],
         )
-        self.confirmation_code(room["id"], "timeout_waiting_room", user["id"])
+        # self.confirmation_code(room["id"], "timeout_waiting_room", user["id"])
         self.remove_user_from_room(user["id"], room["id"])
 
     def remove_user_from_room(self, user_id, room_id):
@@ -781,6 +878,21 @@ class ReferenceBot(TaskBot):
             headers={"If-Match": etag, "Authorization": f"Bearer {self.token}"},
         )
         self.request_feedback(response, "removing user from task toom")
+    
+    # experimental    
+    def resize_big_pictures(self, room_id, user_id, pic_number):
+        response = requests.patch(
+        f"{self.uri}/rooms/{room_id}/attribute/id/pic{pic_number}",
+            headers={"Authorization": f"Bearer {self.token}"},
+            json={"attribute": "style", "value": "height: 150px; width: 150px; padding: 10px; margin: 10px", "receiver_id": user_id},
+        )
+    
+    def resize_small_pictures(self, room_id, user_id, pic_number):
+        response = requests.patch(
+        f"{self.uri}/rooms/{room_id}/attribute/id/pic{pic_number}",
+            headers={"Authorization": f"Bearer {self.token}"},
+            json={"attribute": "style", "value": "height: 100px; width: 100px; padding: 10px; margin: 10px", "receiver_id": user_id},
+        )
 
     def move_divider(self, room_id, chat_area=50, task_area=50):
         """move the central divider and resize chat and task area
@@ -831,8 +943,8 @@ class ReferenceBot(TaskBot):
             "The experiment is over 🎉 🎉 thank you very much for your time!",
             room_id,
         )
-        for player in self.sessions[room_id].players:
-            self.confirmation_code(room_id, "success", player["id"])
+        # for player in self.sessions[room_id].players:
+        #     self.confirmation_code(room_id, "success", player["id"])
         self.close_game(room_id)
 
     def timeout_close_game(self, room_id, status):
@@ -843,8 +955,8 @@ class ReferenceBot(TaskBot):
             self.send_message_to_user(
                 STANDARD_COLOR, "The room is closing because of inactivity", room_id
             )
-            for player in self.sessions[room_id].players:
-                self.confirmation_code(room_id, status, player["id"])
+            # for player in self.sessions[room_id].players:
+            #     self.confirmation_code(room_id, status, player["id"])
             self.close_game(room_id)
 
     def close_game(self, room_id):
@@ -887,32 +999,32 @@ class ReferenceBot(TaskBot):
         self.sessions[room_id].points["history"][0]["wrong"] = wrong
         self.request_feedback(response, "setting point stand in title")
 
-    def confirmation_code(self, room_id, status, user_id):
-        """Generate AMT token that will be sent to each player."""
-        amt_token = "".join(random.choices(string.ascii_uppercase + string.digits, k=6))
-        if room_id in self.sessions:
-            points = self.sessions[room_id].points
-        else:
-            points = 0
-            logging.debug(f"Room not in self sessions {points}")
-        self.log_event(
-            "confirmation_log",
-            {
-                "status_txt": status,
-                "amt_token": amt_token,
-                "receiver": user_id,
-                "points": points,
-            },
-            room_id,
-        )
-        self.send_message_to_user(
-            STANDARD_COLOR,
-            "Please remember to "
-            "save your token before you close this browser window. "
-            f"Your token: {amt_token}",
-            room_id,
-            user_id,
-        )
+    # def confirmation_code(self, room_id, status, user_id):
+    #     """Generate AMT token that will be sent to each player."""
+    #     amt_token = "".join(random.choices(string.ascii_uppercase + string.digits, k=6))
+    #     if room_id in self.sessions:
+    #         points = self.sessions[room_id].points
+    #     else:
+    #         points = 0
+    #         logging.debug(f"Room not in self sessions {points}")
+    #     self.log_event(
+    #         "confirmation_log",
+    #         {
+    #             "status_txt": status,
+    #             "amt_token": amt_token,
+    #             "receiver": user_id,
+    #             "points": points,
+    #         },
+    #         room_id,
+    #     )
+    #     self.send_message_to_user(
+    #         STANDARD_COLOR,
+    #         "Please remember to "
+    #         "save your token before you close this browser window. "
+    #         f"Your token: {amt_token}",
+    #         room_id,
+    #         user_id,
+    #     )
 
     def set_message_privilege(self, room_id, user_id, value):
         """

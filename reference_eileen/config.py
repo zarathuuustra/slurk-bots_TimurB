@@ -51,6 +51,14 @@ PATH_3DS = Path(f"{ROOT}/data/3ds_images/")
 PATH_TUNA = Path(f"{ROOT}/data/tuna_images/")
 PATHNAME = ""
 PICTURE_ENCRYPT = ""
+
+BIG_PIC_CONTAINER = ['tuna_images/60.png', 'tuna_images/83.png', 'tuna_images/0.png', 'tuna_images/41.png', 'tuna_images/68.png', 'tuna_images/96.png', 
+                     'tuna_images/66.png', 'tuna_images/53.png', 'tuna_images/82.png', 'tuna_images/57.png', 'tuna_images/38.png', 'tuna_images/3.png', 
+                     'tuna_images/1.png', 'tuna_images/15.png', 'tuna_images/85.png', 'tuna_images/67.png', 'tuna_images/22.png', 'tuna_images/50.png', 
+                     'tuna_images/70.png', 'tuna_images/51.png', 'tuna_images/65.png', 'tuna_images/26.png', 'tuna_images/87.png', 'tuna_images/18.png', 
+                     'tuna_images/86.png', 'tuna_images/61.png', 'tuna_images/63.png', 'tuna_images/90.png', 'tuna_images/20.png', 'tuna_images/79.png', 
+                     'tuna_images/29.png', 'tuna_images/49.png', 'tuna_images/91.png', 'tuna_images/59.png', 'tuna_images/12.png']
+
 for filename in os.listdir(PATH_3DS):
     if filename.endswith(".png"): 
         # print(os.path.join(directory, filename))
@@ -65,7 +73,7 @@ for filename in os.listdir(PATH_TUNA):
         # print(os.path.join(directory, filename))
         PATHNAME = Path (f"{ROOT}/data/tuna_images/{filename}")
         PICTURE_ENCRYPT = encode(PATHNAME)
-        PICTURE_DIC[f"Picture_tuna_images/{filename}"] = PICTURE_ENCRYPT
+        PICTURE_DIC[f"Picture_tuna_images/{filename}"] = PICTURE_ENCRYPT # Something like: "Picture_tuna_images/11.png"
     else:
         continue
 
